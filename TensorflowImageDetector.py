@@ -2,7 +2,7 @@ import cv2
 import tensorflow as tf
 import numpy as np
 from typing import List
-import label_map_util
+from . import label_map_util
 
 class TensorflowImageDetector:
   def __init__(self, pathToModel, pathToLabelMap):
