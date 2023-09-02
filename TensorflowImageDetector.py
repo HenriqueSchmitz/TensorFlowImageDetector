@@ -36,3 +36,18 @@ class TensorflowImageDetector:
     image_np = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     input_tensor = tf.convert_to_tensor(image_np)[tf.newaxis, ...]
     return model(input_tensor)
+
+  def drawDetectionsOnImage(self, image, detections, allowedLabels = None):
+    editedImage = image.copy()
+    if isinstance(allowedLabels, list):
+      for detection in detections:
+        if detection['label'] in allowedLabels:
+          self.__drawSingleDetection(editedImage, detection)
+    else:
+      for detection in detections:
+        self.__drawSingleDetection(editedImage, detection)
+    return editedImage
+
+  def __drawSingleDetection(self, image, detection):
+    cv2.rectangle(image, detection["topLeftPoint"], detection["bottomRightPoint"], (0,255,0), 2)
+    cv2.putText(image, f"{detection['label']}: {int(detection['score']*100)} %", detection["topLeftPoint"], cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
