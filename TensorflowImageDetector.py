@@ -3,6 +3,7 @@ import tensorflow as tf
 import numpy as np
 from typing import List
 from . import label_map_util
+import json
 
 class TensorflowImageDetector:
   def __init__(self, pathToModel, pathToLabelMap):
@@ -51,3 +52,16 @@ class TensorflowImageDetector:
   def __drawSingleDetection(self, image, detection):
     cv2.rectangle(image, detection["topLeftPoint"], detection["bottomRightPoint"], (0,255,0), 2)
     cv2.putText(image, f"{detection['label']}: {int(detection['score']*100)} %", detection["topLeftPoint"], cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255), 2)
+
+  def saveDetections(self, detections, filePath):
+    convertedDetections = [{**detection, 'score': float(detection["score"])} for detection in detections]
+    detectionsJson = json.dumps(convertedDetections)
+    with open(filePath, 'w') as file:
+      file.write(detectionsJson)
+  
+  def loadDetections(self, filePath):
+    readFile = ""
+    with open(filePath, 'r') as file:
+      readFile = file.read()
+    loadedDetections = json.loads(readFile)
+    return loadedDetections
